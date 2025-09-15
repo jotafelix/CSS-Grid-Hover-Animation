@@ -75,10 +75,10 @@ body {
 .card.is-expanded { z-index: 3; background: var(--tile-alt); }
 .card.is-expandable:hover { cursor: pointer; }
 
-/* Expanded: expand with alt ends; fallback to same if none provided */
+/* Expanded: expand with alt starts/ends if provided; fallback to defaults */
 .card.is-expanded {
-  grid-column: var(--colStart) / var(--colEndX, var(--colEnd));
-  grid-row: var(--rowStart) / var(--rowEndX, var(--rowEnd));
+  grid-column: var(--colStartX, var(--colStart)) / var(--colEndX, var(--colEnd));
+  grid-row: var(--rowStartX, var(--rowStart)) / var(--rowEndX, var(--rowEnd));
 }
 
 /* Reflow mode: release non-active rows so they stack below */
