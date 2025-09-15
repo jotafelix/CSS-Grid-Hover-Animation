@@ -1,0 +1,164 @@
+:root {
+  --container-max: 1200px;
+  --gutter: 24px;
+  --col-gap: 24px;
+  --row-gap: 28px;
+  --rowH: 50px; /* 9 * 120 + 8 * 28 ≈ 1200px */
+  --rows: 9; /* base rows */
+  --radius: 10px;
+
+  --bg: #ffffff;
+  --ink: #111318;
+  --ink-soft: #4b4f59;
+  --tile: #eef0f6;
+  --tile-alt: #e6e9f2;
+  --brand: #0a70ff;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  color: var(--ink);
+  background: var(--bg);
+}
+
+.page {
+  max-width: calc(var(--container-max) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding: 40px var(--gutter) 120px;
+}
+
+.page-header { margin-bottom: 40px; }
+.headline {
+  font-weight: 800;
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.2;
+  margin: 0 0 16px;
+}
+.lede {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Grid */
+.feature-grid { margin-top: 24px; }
+.feature-grid .grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: repeat(var(--rows), var(--rowH));
+  column-gap: var(--col-gap);
+  row-gap: var(--row-gap);
+  grid-auto-rows: var(--rowH); /* allow extra rows during expansion */
+}
+
+/* Card base */
+.card {
+  position: relative;
+  background: var(--tile);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: grid;
+  align-content: start;
+  overflow: hidden;
+  /* explicit column and row starts */
+  grid-column: var(--colStart) / var(--colEnd);
+  grid-row: var(--rowStart) / var(--rowEnd);
+  transition: box-shadow .2s ease, background .2s ease;
+}
+.card:hover { box-shadow: 0 16px 40px rgba(0,0,0,.12); }
+.card.is-expanded { z-index: 3; background: var(--tile-alt); }
+
+/* Expanded: expand with alt ends; fallback to same if none provided */
+.card.is-expanded {
+  grid-column: var(--colStart) / var(--colEndX, var(--colEnd));
+  grid-row: var(--rowStart) / var(--rowEndX, var(--rowEnd));
+}
+
+/* Reflow mode: release non-active rows so they stack below */
+.grid.reflow .card:not(.is-expanded) {
+  grid-row: auto / span calc(var(--rowEnd) - var(--rowStart));
+}
+
+/* Eyebrow / text styles */
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.card h3 { margin: 0; font-weight: 700; line-height: 1.15; }
+.card h3 strong { font-weight: 800; font-size: 1.15em; }
+.card .sub { margin: 6px 0 0; color: var(--ink-soft); font-size: 13px; line-height: 1.45; }
+
+/* Types */
+.card.metric { background: #f1f3f9; }
+.card.stat { background: #eceff6; }
+.card.image { background: #f6f8fc; }
+.card.tag {
+  background: #f3f5fb;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+/* Decorative image placeholder */
+.card.image .img {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 58%;
+  background: linear-gradient(135deg, #b9bfd1, #e2e5ee);
+}
+.card.image h3 { margin-top: 6px; }
+
+/* Clinical expanded panel */
+.card .expanded-panel { display: none; margin-top: 12px; }
+.card.is-expanded .expanded-panel { display: block; }
+.card .cta {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #fff;
+  color: var(--ink);
+  border-radius: 999px;
+  text-decoration: none;
+  border: 1px solid #e1e4ec;
+}
+
+/* Small arrow button affordance */
+.more {
+  --s: 28px;
+  position: absolute;
+  right: 10px; bottom: 10px;
+  width: var(--s); height: var(--s);
+  border-radius: 999px;
+  border: none;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  cursor: pointer;
+}
+.more::before { content: "\2192"; font-size: 16px; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .page { padding-inline: 20px; }
+}
+@media (max-width: 1024px) {
+  .lede { grid-template-columns: 1fr; }
+  .feature-grid .grid { grid-template-columns: repeat(8, 1fr); }
+}
+@media (max-width: 720px) {
+  .feature-grid .grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+} 
