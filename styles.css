@@ -73,6 +73,7 @@ body {
 }
 .card:hover { box-shadow: 0 16px 40px rgba(0,0,0,.12); }
 .card.is-expanded { z-index: 3; background: var(--tile-alt); }
+.card.is-expandable:hover { cursor: pointer; }
 
 /* Expanded: expand with alt ends; fallback to same if none provided */
 .card.is-expanded {

@@ -9,6 +9,10 @@
 
   let active = null;
 
+  function isExpandable(card) {
+    return card.classList.contains('is-expandable');
+  }
+
   function flipFrom(state, opts) {
     if (reduceMotion) return; // instant change when reduced motion
     gsap.registerPlugin(Flip);
@@ -22,12 +26,13 @@
   }
 
   function expandCard(card) {
+    if (!isExpandable(card)) return;
     if (active === card) return; // already expanded
     const state = !reduceMotion ? Flip.getState([grid, ...cards]) : null; // include grid for class changes
     grid.classList.add('reflow');
     cards.forEach(c => c.classList.toggle('is-expanded', c === card));
     active = card;
-    cards.forEach(c => c.setAttribute('aria-expanded', c === card ? 'true' : 'false'));
+    cards.forEach(c => c.setAttribute('aria-expanded', isExpandable(c) && c === card ? 'true' : 'false'));
     flipFrom(state);
   }
 
@@ -41,19 +46,20 @@
     flipFrom(state, { duration: 0.5 });
   }
 
-  // Hover/focus interactions
+  // Hover/focus interactions - only on expandable cards
+  const expandableCards = cards.filter(isExpandable);
   if (supportsHover) {
-    cards.forEach(card => {
+    expandableCards.forEach(card => {
       card.addEventListener('mouseenter', () => expandCard(card));
       card.addEventListener('focusin', () => expandCard(card));
     });
     grid.addEventListener('mouseleave', collapse);
   }
 
-  // Touch/click toggle (one at a time)
+  // Touch/click toggle (one at a time) - only for expandable
   grid.addEventListener('click', (e) => {
     const card = e.target.closest('.card');
-    if (!card) return;
+    if (!card || !isExpandable(card)) return;
     if (active === card) collapse(); else expandCard(card);
   });
 
